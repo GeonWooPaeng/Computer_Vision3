@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 
 
-src = cv2.imread('cells.png', cv2.IMREAD_GRAYSCALE)
+src = cv2.imread('.\Business_card_recognition_program.\cells.png', cv2.IMREAD_GRAYSCALE)
 
 if src is None:
     print('Image load failed!')
@@ -22,3 +22,5 @@ cv2.setTrackbarPos('Threshold', 'dst', 128)
 
 cv2.waitKey()
 cv2.destroyAllWindows()
+
+
