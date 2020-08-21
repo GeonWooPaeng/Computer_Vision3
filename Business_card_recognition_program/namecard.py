@@ -35,6 +35,9 @@ import pytesseract
 
 
 def reorderPts(pts):
+    #lexsort 사용 방법
+    # https://numpy.org/doc/stable/reference/generated/numpy.lexsort.html#numpy.lexsort
+    
     # 외곽선 근사화 점 재정의 
     #1. 점들의 좌표를 x좌표 기준으로 2개씩 나눈다.
     #2. 나눈 2개를 가지고 y좌표를 기준으로 나눈다.
@@ -101,3 +104,27 @@ cv2.imshow('src', src)
 cv2.imshow('dst', dst)
 cv2.waitKey()
 cv2.destroyAllWindows()
+
+
+
+
+
+
+
+import sys 
+import random 
+import numpy as np 
+import cv2 
+import pytesseract 
+
+def reorderPts(pts):
+    idx = np.lexsort((pts[:,1], pts[:, 0]))
+    pts = pts[idx]
+
+    if pts[0,1] > pts[1,1]:
+        pts[[0,1]] = pts[[1,0]]
+
+    if pts[2,1] < pts[3,1]:
+        pts[[2,3]] = pts[[3,2]]
+
+    return pts
