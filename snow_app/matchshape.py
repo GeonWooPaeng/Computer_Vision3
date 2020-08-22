@@ -54,3 +54,4 @@ for pts in contours: #pts: 외곽선 하나의 정보
 cv2.imshow('obj', obj)
 cv2.imshow('dst', dst)
 cv2.waitKey(0)
+
