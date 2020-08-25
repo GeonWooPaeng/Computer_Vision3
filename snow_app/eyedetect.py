@@ -9,20 +9,20 @@ if src is None:
     print('Image load failed!')
     sys.exit()
 
-face_classifier = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
-eye_classifier = cv2.CascadeClassifier('haarcascade_eye.xml')
+face_classifier = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')#얼굴 검출
+eye_classifier = cv2.CascadeClassifier('haarcascade_eye.xml')#눈 검출
 
 if face_classifier.empty() or eye_classifier.empty():
     print('XML load failed!')
     sys.exit()
 
-faces = face_classifier.detectMultiScale(src)
+faces = face_classifier.detectMultiScale(src) #얼굴 검출
 
 for (x1, y1, w1, h1) in faces:
     cv2.rectangle(src, (x1, y1), (x1 + w1, y1 + h1), (255, 0, 255), 2)
 
-    faceROI = src[y1:y1 + h1 // 2, x1:x1 + w1]
-    eyes = eye_classifier.detectMultiScale(faceROI)
+    faceROI = src[y1:y1 + h1 // 2, x1:x1 + w1] # 얼굴 반쪽 위에서만
+    eyes = eye_classifier.detectMultiScale(faceROI) #눈 검출(faceROI 범위에서)
 
     for (x2, y2, w2, h2) in eyes:
         center = (x2 + w2 // 2, y2 + h2 // 2)
