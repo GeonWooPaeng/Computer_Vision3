@@ -3,14 +3,14 @@ import numpy as np
 import cv2
 
 
-src = cv2.imread('lenna.bmp')
+src = cv2.imread('.\snow_app.\lenna.bmp')
 
 if src is None:
     print('Image load failed!')
     sys.exit()
 
-face_classifier = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')#얼굴 검출
-eye_classifier = cv2.CascadeClassifier('haarcascade_eye.xml')#눈 검출
+face_classifier = cv2.CascadeClassifier('.\snow_app.\haarcascade_frontalface_alt2.xml')#얼굴 검출
+eye_classifier = cv2.CascadeClassifier('.\snow_app.\haarcascade_eye.xml')#눈 검출
 
 if face_classifier.empty() or eye_classifier.empty():
     print('XML load failed!')
