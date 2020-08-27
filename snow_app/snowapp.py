@@ -1,3 +1,13 @@
+# 스노우 앱 
+# 카메라 입력 영상에서 얼굴을 검출하여 재미있는 그래픽을 합성하는 프로그램 
+
+# 구현할 기능 
+# 카메라 입력 영상에서 얼굴&눈 검출하기
+# - 캐스케이드 분류기 사용 
+# 눈 위치와 맞게 투명한 PNG 파일 합성하기
+# - PNG 영상 크기 조절 및 위치 계산  
+# 합성된 결과를 동영상으로 저장하기 
+
 import sys
 import numpy as np
 import cv2
@@ -33,27 +43,29 @@ if not cap.isOpened():
     print('Camera open failed!')
     sys.exit()
 
-w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) #기본 카메라 넓이
+h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) #기본 카메라 높이
 
+# 합성된 결과 동영상 파일로 저장
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
 out = cv2.VideoWriter('output.avi', fourcc, 30, (w, h))
 
 # Haar-like XML 파일 열기
-face_classifier = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
-eye_classifier = cv2.CascadeClassifier('haarcascade_eye.xml')
+face_classifier = cv2.CascadeClassifier('.\snow_app.\haarcascade_frontalface_alt2.xml')#얼굴 검출
+eye_classifier = cv2.CascadeClassifier('.\snow_app.\haarcascade_eye.xml')#눈 검출
 
 if face_classifier.empty() or eye_classifier.empty():
     print('XML load failed!')
     sys.exit()
 
 # 안경 PNG 파일 열기 (Image from http://www.pngall.com/)
-glasses = cv2.imread('glasses.png', cv2.IMREAD_UNCHANGED)
+glasses = cv2.imread('.\snow_app.\glasses.png', cv2.IMREAD_UNCHANGED) 
 
 if glasses is None:
     print('PNG image open failed!')
     sys.exit()
 
+# 합성 할 안경 영상 위치좌표 계산
 ew, eh = glasses.shape[:2]  # 가로, 세로 크기
 ex1, ey1 = 240, 300  # 왼쪽 눈 좌표
 ex2, ey2 = 660, 300  # 오른쪽 눈 좌표
@@ -69,6 +81,7 @@ while True:
     faces = face_classifier.detectMultiScale(frame, scaleFactor=1.2,
                                              minSize=(100, 100), maxSize=(400, 400))
 
+    # 얼굴 검출한 부분에서 눈 검출하기
     for (x, y, w, h) in faces:
         #cv2.rectangle(frame, (x, y, w, h), (255, 0, 255), 2)
 
@@ -93,10 +106,13 @@ while True:
         #cv2.circle(faceROI, (x2, y2), 5, (255, 0, 0), 2, cv2.LINE_AA)
 
         # 두 눈 사이의 거리를 이용하여 스케일링 팩터를 계산 (두 눈이 수평하다고 가정)
+        # (x2-x1): 실제 입력영상에서의 두 눈의 간격
+        # (ex2 - ex1): PNG파일(안경영상)에서의 두 눈의 간격
         fx = (x2 - x1) / (ex2 - ex1)
         glasses2 = cv2.resize(glasses, (0, 0), fx=fx, fy=fx, interpolation=cv2.INTER_AREA)
 
         # 크기 조절된 안경 영상을 합성할 위치 계산 (좌상단 좌표)
+        # resize한 png영상이 실제 카메라 프레임 어느 위치에서 시작되서 할것인가(좌측상단 좌표)
         pos = (x1 - int(ex1 * fx), y1 - int(ey1 * fx))
 
         # 영상 합성
