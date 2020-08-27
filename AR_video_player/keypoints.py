@@ -1,3 +1,5 @@
+# 특징점 검출
+
 import sys
 import numpy as np
 import cv2
