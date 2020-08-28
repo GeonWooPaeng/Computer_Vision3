@@ -1,11 +1,15 @@
+# 좋은 매칭 선별 2
+# 가장 좋은 매칭 결과의 distance 값과 두 번째로 좋은 매칭 결과의 distance 값의 비율 계산
+# 이 비율이 임계값(e.g. 0.7)보다 작으면 선택
+
 import sys
 import numpy as np
 import cv2
 
 
 # 영상 불러오기
-src1 = cv2.imread('graf1.png', cv2.IMREAD_GRAYSCALE)
-src2 = cv2.imread('graf3.png', cv2.IMREAD_GRAYSCALE)
+src1 = cv2.imread('.\AR_video_player.\graf1.png', cv2.IMREAD_GRAYSCALE)
+src2 = cv2.imread('.\AR_video_player.\graf3.png', cv2.IMREAD_GRAYSCALE)
 
 if src1 is None or src2 is None:
     print('Image load failed!')
@@ -23,11 +27,11 @@ kp2, desc2 = feature.detectAndCompute(src2, None)
 # 특징점 매칭
 matcher = cv2.BFMatcher_create()
 #matcher = cv2.BFMatcher_create(cv2.NORM_HAMMING)
-matches = matcher.knnMatch(desc1, desc2, 2)
+matches = matcher.knnMatch(desc1, desc2, 2) #k == 2개를 같이 가져온다.
 
 # 좋은 매칭 결과 선별
 good_matches = []
-for m in matches:
+for m in matches: #DMath의 list
     if m[0].distance / m[1].distance < 0.7:
         good_matches.append(m[0])
 
@@ -39,6 +43,7 @@ print('# of good_matches:', len(good_matches))
 # 특징점 매칭 결과 영상 생성
 dst = cv2.drawMatches(src1, kp1, src2, kp2, good_matches, None)
 
+cv2.namedWindow('dst', cv2.WINDOW_NORMAL) #영상의 창의 크기를 맞춰준다.
 cv2.imshow('dst', dst)
 cv2.waitKey()
 cv2.destroyAllWindows()
