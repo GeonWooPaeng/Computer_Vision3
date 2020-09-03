@@ -1,10 +1,23 @@
+# AR 비디오 플레이어
+# 카메라 프레임에 특정 영상이 나타나면 해당 위치에 동영상을 재생하는 기능
+
+# 구현할 기능
+# 기준 영상과 카메라 프레임 사이의 특징점 검출 및 매칭
+# 호모그래피 계산
+# 동영상 프레임 투시 변환 & 합성
+
+# 구현 방법 
+# 1. Reference Image에서 camera frame 계산 
+# 2. video frame을 H 적용하여 wraped video frame 
+# 3. 합성
+
 import sys
 import numpy as np
 import cv2
 
 
 # 기준 영상 불러오기
-src = cv2.imread('korea.jpg', cv2.IMREAD_GRAYSCALE)
+src = cv2.imread('.\AR_video_player.\korea.jpg', cv2.IMREAD_GRAYSCALE)
 
 if src is None:
     print('Image load failed!')
@@ -22,7 +35,7 @@ if not cap1.isOpened():
 #cap1.set(cv2.CAP_PROP_FRAME_HEIGHT, 600)
 
 # 카메라 프레임 화면에 출력할 동영상 파일 열기
-cap2 = cv2.VideoCapture('korea.mp4')
+cap2 = cv2.VideoCapture('.\AR_video_player.\korea.mp4')
 
 if not cap2.isOpened():
     print('Video load failed!')
@@ -45,7 +58,7 @@ while True:
 
     # 매 프레임마다 특징점 검출 및 기술자 생성
     gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
-    kp2, desc2 = detector.detectAndCompute(gray, None)
+    kp2, desc2 = detector.detectAndCompute(gray, None) #특징점, 특징 vector 계산 
 
     # 특징점이 100개 이상 검출될 경우 매칭 수행
     if len(kp2) > 100:
@@ -63,9 +76,9 @@ while True:
 
         inlier_cnt = cv2.countNonZero(inliers)
 
-        # RANSAC 방법에서 정상적으로 매칭된 것의 개수가 20개 이상이면
+        # RANSAC 방법에서 정상적으로 매칭된 것의 개수가 20개 이상이면 => 매칭을 잘했다라고 판단
         if inlier_cnt > 20:
-            ret2, frame2 = cap2.read()
+            ret2, frame2 = cap2.read() #동영상 파일에서 
 
             if not ret2:
                 break
@@ -73,7 +86,7 @@ while True:
             h, w = frame1.shape[:2]
 
             # 비디오 프레임을 투시 변환
-            video_warp = cv2.warpPerspective(frame2, H, (w, h))
+            video_warp = cv2.warpPerspective(frame2, H, (w, h)) #결과는 카메라 입력 frame과 같아야 한다.
 
             white = np.full(frame2.shape[:2], 255, np.uint8)
             white = cv2.warpPerspective(white, H, (w, h))
