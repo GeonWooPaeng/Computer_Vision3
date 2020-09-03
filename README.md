@@ -9,7 +9,8 @@
 - 얼굴 & 눈 검출(캐스케이드 분류기) -> PNG파일 합성 -> 합성 결과 저장
 
 3 AR video player
-
+- A function to play a specific video in the camera frame
+- 영상 frame 계산 -> video frame에 영상 frame 계산한 것 적용 -> 합성
 
 ## Use 
 - Python, OpenCV
